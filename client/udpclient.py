@@ -7,7 +7,7 @@ import sys
 class ClientZ:
     def __init__(self):
         self.core = Core()
-        self.core.create('0.0.0.0', 80)
+        self.core.create('127.0.0.1', 8080)
         self.nick = 'r+'
 
         threading.Thread(target=self.SendMsg).start()

@@ -8,7 +8,7 @@ class Chat():
 
     def __init__(self):
         self.Server = Engine()
-        self.Server.createServer('', 8000, 'udp')
+        self.Server.createServer('', 8080, 'udp')
         print(self.Server)
         threading.Thread(target=self.Server.clientCheck).start()
         self.loop()

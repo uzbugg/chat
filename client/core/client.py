@@ -41,7 +41,8 @@ class Core:
             self.sock.sendto('/ping'.encode('utf-8'), self.remote)
             data = None
             return data
-
+        if data[0] == '/':
+            data = self.switch(data, 0)
         return data
 
     '''
@@ -58,11 +59,12 @@ class Core:
         data = '/pong'
         self.sock.sendto(data.encode('utf-8'), self.remote)
 
+    #rem = remote host, if a remote host ask me to say hello, I do it!
     def ping(self, rem = 0):
         data = '/ping'
         if rem == 1:
             self.sock.sendto(data.encode('utf-8'), self.remote)
-            return 0
+            return None
 
         while 1:
             self.sock.sendto(data.encode('utf-8'), self.remote)
@@ -70,3 +72,21 @@ class Core:
 
     def disconnect(self):
         pass
+
+    def bye(self):
+        print('been removed')
+        return None
+
+    def hello(self):
+        pass 
+
+    def switch(self, param, arg = 0):
+        opt = {
+            'bye': self.bye,
+            'hello:': self.bye,
+        }
+
+        try:
+            return opts[param[1:]](arg)
+        except ValueError:
+            return None

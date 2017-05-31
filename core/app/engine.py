@@ -31,8 +31,9 @@ class Engine():
     def get(self):
 
         data, addr = self.sock.recvfrom(1024)
-        if data.decode('utf-8')[0] == '/':
-            self.switch(data.decode('utf-8'), addr)
+        data = data.decode("utf-8")
+        if data[0] == '/':
+            self.switch(data, addr)
             #if returned data, addr ?? - display action message
             return None, addr
         return data, addr
@@ -45,16 +46,18 @@ class Engine():
         data is the data to be sent ofc
         client is a list (ip, port)
         '''
-        self.sock.sendto(data.encode('utf-8'), client)
+        self.sock.sendto(data.encode("utf-8"), client)
 
     '''
     broadcasting - sending bytes to all connections
     '''
     def broadcast(self, data):
-        for conn in self.connections:
-            if  data:
-                self.sock.sendto(data, conn)
-            continue
+        if data:
+            for conn in self.connections:
+                self.post(data, conn)
+            return 1
+        else:
+            return 0
 
     '''
     keeping track of active connnections
@@ -94,11 +97,14 @@ class Engine():
                     while 1:
                         if cltime != self.udata[uid]['time']:
                             break
-                        if time.time() >= float(cltime):
+                        if time.time() - float(wait) >= 30:
                             break
                     if float(cltime) == self.udata[uid]['time']:
+                        #send bye message
+                        self.post("/bye", c)
                         self.connections.remove(c)
                         del self.udata[uid]
+                        print("removed " + str(c))
 
         time.sleep(30)
 
